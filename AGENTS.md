@@ -14,9 +14,11 @@ In `dao/` where app source lives:
 | `dao/Models/` | 状态模型 + `AppSettings`（Defaults keys）+ `LanguageManager` |
 | `dao/Monitors/` | Battery / CPU / Disk / Memory / Network 采样 |
 | `dao/Views/` | Notch 窗体、收展态、媒体/架/设置 UI |
-| `dao/Resources/` | 打包资源（含 `mediaremote-adapter.pl`） |
+| `dao/Resources/` | 打包资源（`mediaremote-adapter.pl`、`Assets.xcassets`） |
 | `dao/Utils/` | 屏幕刘海检测、扩展 |
 | `daoTests/` | XCTest，`@testable import dao` |
+| `assets/` | 源 logo（`logo.png`）；`logo-candidates/` 工作稿 gitignore |
+| `dist/` | 本地 DMG 输出（gitignore，不提交） |
 | `Vendor/` | MediaRemote 适配器源码 + 构建产物（framework 不提交） |
 | `Scripts/` | 适配器构建脚本 |
 | `project.yml` | **XcodeGen 源真相**（勿手改 `dao.xcodeproj`） |
@@ -50,6 +52,18 @@ In `dao/` where app source lives:
 
 8. **Comments / docs: Simplified Chinese. Identifiers: English.**
 
+9. **App icon source of truth = asset catalog**.
+   - Edit / replace sizes under `dao/Resources/Assets.xcassets/AppIcon.appiconset/`.
+   - SwiftUI UI image: `AppIconImage` imageset（onboarding 等）。
+   - Master raster: `assets/logo.png`（再导出各尺寸）。
+   - `dao/Resources/AppIcon.icns` / `AppIcon.iconset` 为本地生成物，**gitignore**；`project.yml` 已 exclude，勿当提交源。
+   - `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon` 写在 `project.yml` target settings。
+
+10. **`LSUIElement` = 无 Dock / 菜单栏图标**。启动“没反应”时先查：
+    - 进程是否在跑（Activity Monitor / `pgrep -x dao`）
+    - 屏幕**顶中刘海**是否有胶囊；悬停约 `hoverExpandDelay`（0.5s）展开
+    - arm64 未签名二进制会被 `SIGKILL`（`Killed: 9` / runningboard spawn fail）——见下方 Packaging
+
 ### Anti-patterns
 
 ```swift
@@ -67,6 +81,9 @@ In `dao/` where app source lives:
 
 // WRONG: commit Vendor/MediaRemoteAdapter.framework or build-mediaremote-adapter/
 // CORRECT: gitignore binaries; rebuild via Scripts/build-mediaremote-adapter.sh
+
+// WRONG: commit dist/*.dmg or Assets only as loose AppIcon.icns without appiconset
+// CORRECT: AppIcon.appiconset + assets/logo.png; DMG 仅挂 GitHub Release / 本地 dist/
 ```
 
 ## Build / Run / Test
@@ -97,7 +114,24 @@ Scripts/build-mediaremote-adapter.sh
 
 Debug: open `dao.xcodeproj`, scheme `dao`. App is `LSUIElement` (no Dock icon) — look for notch panel / Activity Monitor.
 
-Release (fill placeholders in `build.sh` first):
+若 `xcode-select` 仍指向 Command Line Tools，构建时：
+
+```bash
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+```
+
+### Packaging / DMG（本地 ad-hoc）
+
+本机常无 Developer ID。`build.sh` 需证书 + notary 才完整；日常本地分发：
+
+1. Release 构建（Documents 下 iCloud xattr 常导致 Xcode `CodeSign` 失败——**产物仍可能完整**，到 `/tmp` 再签）。
+2. `ditto --norsrc --noextattr --noqtn` 拷到 `/tmp/.../dao.app`，`find … xattr -c`。
+3. **由内向外 ad-hoc 签**：每个 Mach-O → `.xpc` / nested `.app` → `.framework` → 主 bundle（全部 `codesign --force --sign -`）。嵌套 framework 与主程序 Team ID 必须一致（都 ad-hoc / 都空 Team），否则 dyld：`different Team IDs`。
+4. `codesign --verify --deep` + 直接跑二进制冒烟（勿只 `open`）。
+5. `hdiutil create -volname dao -srcfolder stage -format UDZO dist/dao-VERSION.dmg`（stage 含 `dao.app` + `Applications` 符号链接）。
+6. GitHub：`gh release upload vX.Y.Z dist/dao-X.Y.Z.dmg --clobber`。DMG **不进 git**。
+
+正式发布（有 Developer ID 时）：
 
 ```bash
 ./build.sh [version]   # archive → licenses → sign → DMG → notary → stapler → appcast sign
@@ -105,9 +139,11 @@ Release (fill placeholders in `build.sh` first):
 
 Sparkle fields in `project.yml` (`SUFeedURL`, `SUPublicEDKey`, `SUEnableAutomaticChecks`) are placeholders until ship config is real.
 
+Public repo：`https://github.com/haoyiyin/dao`（`main`；Release 挂 DMG）。
+
 ## Media remote adapter
 
-- Source: `Vendor/mediaremote-adapter` (ungive/mediaremote-adapter, MIT, vendored — not a submodule).
+- Source: `Vendor/mediaremote-adapter` (ungive/mediaremote-adapter，**BSD-3-Clause**，vendored — not a submodule)。脚本注释若写 MIT 以 `Vendor/mediaremote-adapter/LICENSE` 为准。
 - Output: `Vendor/MediaRemoteAdapter.framework` (gitignored); pre-build script always rebuilds when cmake present.
 - Bundled script: `dao/Resources/mediaremote-adapter.pl` **must stay in sync** with `Vendor/mediaremote-adapter/bin` counterpart.
 - Stream protocol: JSON lines; `diff=false` full snapshot, `diff=true` partial (NSNull clears fields). Merge logic in `StreamPayloadAccumulator` (unit-tested).
@@ -146,10 +182,13 @@ From `.swiftlint.yml`:
 - [ ] Main-actor boundaries respected for UI state
 - [ ] `mediaremote-adapter.pl` still synced if adapter script changed
 - [ ] Release path: licenses still copied in `build.sh` for new deps
+- [ ] AppIcon：`AppIcon.appiconset` + `ASSETCATALOG_COMPILER_APPICON_NAME`；未误提 `AppIcon.icns` / `dist/`
+- [ ] 本地 DMG：ad-hoc 内→外签名通过 `codesign --verify --deep` 且二进制能启动（非仅 Gatekeeper 对话框）
 
 ## Do not
 
 - Add npm/JS tooling or rewrite as Catalyst/iOS
 - Replace perl MediaRemote bridge with in-process private API calls
 - Introduce a second settings store beside Defaults
-- Commit `DerivedData/`, `.swiftpm/`, or adapter build products
+- Commit `DerivedData/`, `.swiftpm/`、adapter build products、`dist/*.dmg`、`assets/logo-candidates/`
+- Ship unsigned arm64 main binary（会被系统直接杀进程，表现为“点了没反应”）
