@@ -17,3 +17,8 @@ xcuserdata/
 Vendor/MediaRemoteAdapter.framework
 Vendor/build-mediaremote-adapter/
 dist/
+
+# logo working files
+assets/logo-candidates/
+dao/Resources/AppIcon.iconset/
+dao/Resources/AppIcon.icns

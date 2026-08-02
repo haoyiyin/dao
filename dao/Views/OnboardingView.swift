@@ -54,9 +54,12 @@ struct OnboardingView: View {
 
     private var welcomePage: some View {
         VStack(spacing: 16) {
-            Image(systemName: "music.note.house.fill")
-                .font(.system(size: 48))
-                .foregroundStyle(.white)
+            Image("AppIconImage")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 88, height: 88)
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .shadow(color: .cyan.opacity(0.35), radius: 16, y: 4)
             Text("欢迎使用 dao")
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.white)

@@ -20,6 +20,7 @@
 		2536D5F788912027568D1D3A /* ScreenNotchDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E3B47F534D60B94DF7431D /* ScreenNotchDetector.swift */; };
 		281FDAD7A28E6A396E8D98CC /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 28A180A93537E82138B5A5CF /* LaunchAtLogin */; };
 		2A367AAB3D46C6590410B45F /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD107AC2D118B1F7BD44C1C /* AppCoordinator.swift */; };
+		2AA4A5CEEDF05E9915D1D9E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3C2A6DDF6E175FE26094F27 /* Assets.xcassets */; };
 		2E99D4C7E8E24F04A211E91B /* MediaRemoteAdapter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 848A8551563FB4C23030B723 /* MediaRemoteAdapter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		307717C187893E9DC5C068D7 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041A6A2305A41DEB5B6E9F6A /* NetworkMonitor.swift */; };
 		3245971EA25FAD5D8EEDCC3C /* CollapsedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC02733AA9EA1B8F871B7C9 /* CollapsedView.swift */; };
@@ -137,6 +138,7 @@
 		9446742612C75B128775C053 /* StreamPayloadAccumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamPayloadAccumulatorTests.swift; sourceTree = "<group>"; };
 		96347C7FBAD3382724304D01 /* ShelfItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfItemRowView.swift; sourceTree = "<group>"; };
 		9D2C87C6CDAFFC463E1810D1 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		A3C2A6DDF6E175FE26094F27 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A6715C794B0CECDAEF0664C2 /* ShelfManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfManagerTests.swift; sourceTree = "<group>"; };
 		A81490B889DC1F775C837262 /* SettingsDrawerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDrawerView.swift; sourceTree = "<group>"; };
 		AEDDF47D1721320CEAE8C34D /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -268,6 +270,7 @@
 		C7223351B28441F16D064175 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A3C2A6DDF6E175FE26094F27 /* Assets.xcassets */,
 				0A28AE4151C696E6D3CC536D /* mediaremote-adapter.pl */,
 			);
 			path = Resources;
@@ -438,6 +441,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2AA4A5CEEDF05E9915D1D9E8 /* Assets.xcassets in Resources */,
 				AFB9206AFAFC5730D06376F9 /* mediaremote-adapter.pl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
