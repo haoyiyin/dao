@@ -5,17 +5,14 @@ import SwiftUI
 /// 设置页（灵动岛内打开）
 ///
 /// 布局：
-/// - 顶部行（右侧）：退出图标（power）+ 间距 + 关闭图标（xmark）
-/// - 左侧列表：自启动（第一）→ 语言切换（第二）→ 系统信息显示项 → 默认播放器
+/// - 顶部行：自启动 / 语言 / 退出 / 关闭
+/// - 默认播放器选择
 struct SettingsDrawerView: View {
     @EnvironmentObject private var language: LanguageManager
     @ObservedObject private var launchAtLogin = LaunchAtLogin.observable
 
     /// 默认播放器（Defaults 持久化）
     @Default(.defaultPlayer) private var defaultPlayer
-
-    /// 当前显示项顺序（编辑中；隐藏项不在此列表）
-    @State private var visibleMetrics: [SystemMetric] = AppSettings.systemMetricsOrder
 
     /// 关闭设置回调（由 ExpandedView 注入）
     var onClose: () -> Void = {}
@@ -63,14 +60,6 @@ struct SettingsDrawerView: View {
             Divider()
                 .overlay(Color.white.opacity(0.15))
 
-            // 系统信息显示项（全部指标，眼睛图标指示显示/隐藏）
-            ForEach(SystemMetric.allCases) { metric in
-                metricRow(metric)
-            }
-
-            Divider()
-                .overlay(Color.white.opacity(0.15))
-
             // 默认播放器选择（无媒体播放时点击播放打开的应用）
             Text(language.text("默认播放器", "Default player"))
                 .font(.caption2)
@@ -89,55 +78,7 @@ struct SettingsDrawerView: View {
         // 内容按自身高度顶部固定（不随窗口高度移动，避免展开动画中下移抖动）
         .padding(10)
     }
-
-    /// 单行指标：眼睛图标（显示/隐藏）+ 名称 + 顺序调整（仅显示项；hover 聚焦）
-    private func metricRow(_ metric: SystemMetric) -> some View {
-        MetricRowView(
-            metric: metric,
-            isVisible: visibleMetrics.contains(metric),
-            canMoveUp: visibleMetrics.firstIndex(of: metric) != 0,
-            canMoveDown: visibleMetrics.firstIndex(of: metric) != visibleMetrics.count - 1,
-            onToggle: {
-                withAnimation(.easeOut(duration: 0.15)) {
-                    toggleVisibility(metric)
-                }
-            },
-            onMoveUp: {
-                guard visibleMetrics.contains(metric) else { return }
-                move(metric, by: -1)
-            },
-            onMoveDown: {
-                guard visibleMetrics.contains(metric) else { return }
-                move(metric, by: 1)
-            }
-        )
-    }
-
-    /// 移动指标位置并保存
-    private func move(_ metric: SystemMetric, by offset: Int) {
-        guard let from = visibleMetrics.firstIndex(of: metric) else { return }
-        let to = from + offset
-        guard visibleMetrics.indices.contains(to) else { return }
-        visibleMetrics.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
-        save()
-    }
-
-    /// 切换显示/隐藏（加入或移出显示列表）
-    private func toggleVisibility(_ metric: SystemMetric) {
-        if let index = visibleMetrics.firstIndex(of: metric) {
-            visibleMetrics.remove(at: index)
-        } else {
-            visibleMetrics.append(metric)
-        }
-        save()
-    }
-
-    /// 保存显示顺序到 Defaults
-    private func save() {
-        Defaults[.systemMetricsOrder] = visibleMetrics.map(\.rawValue)
-    }
 }
-
 
 /// 设置页图标按钮（ScrollView 内使用：onTapGesture + onHover，ClickableView 在 ScrollView 内不触发）
 private struct SettingsIconButton: View {
@@ -188,7 +129,6 @@ private struct SettingsIconButton: View {
         .help(help)
     }
 }
-
 
 /// 语言切换图标（"中"/"EN"，hover 聚焦）
 private struct LanguageToggleIcon: View {
@@ -249,71 +189,5 @@ private struct PlayerOptionChip: View {
                 }
             }
             .onTapGesture(perform: action)
-    }
-}
-
-/// 指标设置行（hover 聚焦：眼睛/上移/下移）
-private struct MetricRowView: View {
-    let metric: SystemMetric
-    let isVisible: Bool
-    let canMoveUp: Bool
-    let canMoveDown: Bool
-    var onToggle: () -> Void
-    var onMoveUp: () -> Void
-    var onMoveDown: () -> Void
-
-    @State private var isHovering = false
-
-    var body: some View {
-        HStack(spacing: 8) {
-            // 行主体：点击切换显示/隐藏
-            HStack(spacing: 8) {
-                Image(systemName: metric.icon)
-                    .font(.system(size: 11))
-                    .foregroundStyle(.white.opacity(isVisible ? 0.5 : 0.2))
-                    .frame(width: 16)
-                Text(metric.displayName)
-                    .font(.system(size: 11))
-                    .foregroundStyle(.white.opacity(isVisible ? 0.8 : 0.3))
-                Spacer()
-                // 眼睛状态：显示 = eye，隐藏 = eye.slash（hover 聚焦）
-                Image(systemName: isVisible ? "eye" : "eye.slash")
-                    .font(.system(size: 10))
-                    .foregroundStyle(.white.opacity(isVisible ? (isHovering ? 1 : 0.5) : 0.3))
-            }
-            .contentShape(Rectangle())
-            .onTapGesture(perform: onToggle)
-
-            // 上移（hover 聚焦）
-            Image(systemName: "chevron.up")
-                .font(.system(size: 9))
-                .foregroundStyle(.white.opacity(!canMoveUp ? 0.2 : (isHovering ? 1 : 0.7)))
-                .frame(width: 20, height: 20)
-                .contentShape(Rectangle())
-                .onTapGesture(perform: onMoveUp)
-            // 下移（hover 聚焦）
-            Image(systemName: "chevron.down")
-                .font(.system(size: 9))
-                .foregroundStyle(.white.opacity(!canMoveDown ? 0.2 : (isHovering ? 1 : 0.7)))
-                .frame(width: 20, height: 20)
-                .contentShape(Rectangle())
-                .onTapGesture(perform: onMoveDown)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 3)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(isHovering ? Color.white.opacity(0.12) : Color.white.opacity(isVisible ? 0.06 : 0.03))
-        )
-        .onContinuousHover { phase in
-            let hovering: Bool
-            switch phase {
-            case .active: hovering = true
-            case .ended: hovering = false
-            }
-            withAnimation(.easeOut(duration: 0.12)) {
-                isHovering = hovering
-            }
-        }
     }
 }

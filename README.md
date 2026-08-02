@@ -10,8 +10,8 @@ Native macOS Dynamic Island for the menu bar notch: media controls, a file shelf
 
 - **Media** — Now playing (artwork, title, artist, seekable progress), play / pause / next / previous, volume. Follows the system now-playing session (last active source). MediaRemote bridge with AppleScript fallback (Apple Music, Spotify, and more).
 - **File shelf** — Drop files, text, or links onto the island; preview (Quick Look), drag out, or share via AirDrop.
-- **System** — CPU, memory, and disk usage with live bars; show/hide and reorder metrics in settings.
-- **Settings** — Launch at login, Chinese / English UI, default player, metric layout, quit.
+- **System** — CPU, memory, and disk usage with live bars.
+- **Settings** — Launch at login, Chinese / English UI, default player, quit.
 - **Non-notch displays** — Optional virtual notch / minimal capsule.
 
 Quit from the power icon inside the island settings drawer (no Dock / menu bar icon).

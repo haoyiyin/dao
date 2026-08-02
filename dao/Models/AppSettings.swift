@@ -5,12 +5,6 @@ import Foundation
 ///
 /// 设置项在 M5 设置页中暴露 UI，此处先行定义键与默认值。
 extension Defaults.Keys {
-    /// 系统监控显示项与顺序（默认全量，按枚举声明顺序）
-    static let systemMetricsOrder = Key<[String]>(
-        "systemMetricsOrder",
-        default: SystemMetric.allCases.map(\.rawValue)
-    )
-
     /// 悬停展开延迟（秒）
     static let hoverExpandDelay = Key<Double>("hoverExpandDelay", default: AppConfig.hoverExpandDelay)
 
@@ -31,14 +25,6 @@ extension Defaults.Keys {
 
     /// 界面语言（zh-Hans / en）；首次安装跟系统首选语言
     static let language = Key<String>("language", default: AppLanguage.systemDefault.rawValue)
-}
-
-/// 设置访问器：读取当前生效的显示顺序
-enum AppSettings {
-    /// 系统监控显示顺序（注意：不做缺失补全——补全会让"隐藏"设置失效）
-    static var systemMetricsOrder: [SystemMetric] {
-        Defaults[.systemMetricsOrder].compactMap(SystemMetric.init)
-    }
 }
 
 
