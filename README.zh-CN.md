@@ -11,7 +11,6 @@
 - **媒体** — 正在播放（封面、标题、艺人、可拖拽进度）、播放 / 暂停 / 上一曲 / 下一曲、音量。音视频同时播放时优先音乐。MediaRemote 桥接，失败时回退 AppleScript（Apple Music、Spotify 等）。
 - **文件架** — 将文件、文本或链接拖到岛上；Quick Look 预览、拖出、AirDrop 分享。
 - **系统** — CPU / 内存 / 磁盘实时条；设置中可显示、隐藏与排序。
-- **快捷键**（可改）— `⌥Space` 播放/暂停 · `⌥F9` 下一曲 · `⌥F7` 上一曲。
 - **设置** — 登录启动、中/英界面、默认播放器、指标布局、退出。
 - **引导** — 首次启动说明屏幕录制与辅助功能权限（可跳过；拒绝后媒体能力降级）。
 - **非刘海屏** — 可选虚拟刘海 / 迷你胶囊。
@@ -63,7 +62,7 @@ hdiutil create -volname dao -srcfolder "$STAGE" -ov -format UDZO dao-0.1.0.dmg
 | 路径 | 职责 |
 |------|------|
 | `dao/App/` | 入口、`AppDelegate`、`AppCoordinator` |
-| `dao/Managers/` | 媒体、文件架、快捷键、监控 |
+| `dao/Managers/` | 媒体、文件架、监控 |
 | `dao/Views/` | 岛窗体、抽屉、设置、引导 |
 | `dao/Config/AppConfig` | 尺寸与延迟常量 |
 | `Vendor/mediaremote-adapter` | MediaRemote 桥（BSD-3） |
@@ -81,7 +80,7 @@ hdiutil create -volname dao -srcfolder "$STAGE" -ov -format UDZO dao-0.1.0.dmg
 
 各自许可证（未注明则为 MIT）：
 
-- [Defaults](https://github.com/sindresorhus/Defaults)、[KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts)、[LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin)
+- [Defaults](https://github.com/sindresorhus/Defaults)、[LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin)
 - [Lottie](https://github.com/airbnb/lottie-ios)、[Sparkle](https://github.com/sparkle-project/Sparkle)
 - [mediaremote-adapter](https://github.com/ungive/mediaremote-adapter) — **BSD-3-Clause**
 

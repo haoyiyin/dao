@@ -22,9 +22,6 @@ packages:
   Defaults:
     url: https://github.com/sindresorhus/Defaults
     from: 8.2.0
-  KeyboardShortcuts:
-    url: https://github.com/sindresorhus/KeyboardShortcuts
-    from: 1.10.0
   LaunchAtLogin:
     url: https://github.com/sindresorhus/LaunchAtLogin
     from: 5.0.2
@@ -75,7 +72,6 @@ targets:
         basedOnDependencyAnalysis: false
     dependencies:
       - package: Defaults
-      - package: KeyboardShortcuts
       - package: LaunchAtLogin
       - package: Lottie
       - package: Sparkle

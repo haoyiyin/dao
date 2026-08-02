@@ -11,7 +11,6 @@ Native macOS Dynamic Island for the menu bar notch: media controls, a file shelf
 - **Media** — Now playing (artwork, title, artist, seekable progress), play / pause / next / previous, volume. Prefers music when music and video play at once. MediaRemote bridge with AppleScript fallback (Apple Music, Spotify, and more).
 - **File shelf** — Drop files, text, or links onto the island; preview (Quick Look), drag out, or share via AirDrop.
 - **System** — CPU, memory, and disk usage with live bars; show/hide and reorder metrics in settings.
-- **Shortcuts** (rebindable) — `⌥Space` play/pause · `⌥F9` next · `⌥F7` previous.
 - **Settings** — Launch at login, Chinese / English UI, default player, metric layout, quit.
 - **Onboarding** — First-run guide for Screen Recording and Accessibility (skippable; media falls back if denied).
 - **Non-notch displays** — Optional virtual notch / minimal capsule.
@@ -81,7 +80,7 @@ Window stays fixed at expanded size (`400×166`); collapse/expand is a visual ma
 
 Bundled / linked under their own licenses (MIT unless noted):
 
-- [Defaults](https://github.com/sindresorhus/Defaults), [KeyboardShortcuts](https://github.com/sindresorhus/KeyboardShortcuts), [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin)
+- [Defaults](https://github.com/sindresorhus/Defaults), [LaunchAtLogin](https://github.com/sindresorhus/LaunchAtLogin)
 - [Lottie](https://github.com/airbnb/lottie-ios), [Sparkle](https://github.com/sparkle-project/Sparkle)
 - [mediaremote-adapter](https://github.com/ungive/mediaremote-adapter) — **BSD-3-Clause**
 

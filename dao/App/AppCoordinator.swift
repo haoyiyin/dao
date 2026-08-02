@@ -43,9 +43,6 @@ final class AppCoordinator {
             }
             .store(in: &coordinatorCancellables)
 
-        // 全局快捷键（M2.5）
-        ShortcutRegistrar.register()
-
         // 首次启动引导
         showOnboardingIfNeeded()
     }

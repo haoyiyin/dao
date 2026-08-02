@@ -18,7 +18,7 @@
 		1A72C16E1D80BF0A5E554FD3 /* DragDropContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19EC699F58FA45B21A839C41 /* DragDropContainerView.swift */; };
 		23B738833AC30E899D64FAB2 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1E75EA50CB9962CFD58558 /* SmokeTests.swift */; };
 		2536D5F788912027568D1D3A /* ScreenNotchDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E3B47F534D60B94DF7431D /* ScreenNotchDetector.swift */; };
-		281FDAD7A28E6A396E8D98CC /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 28A180A93537E82138B5A5CF /* LaunchAtLogin */; };
+		281FDAD7A28E6A396E8D98CC /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = E556554D18BB57B50B2AC12C /* Lottie */; };
 		2A367AAB3D46C6590410B45F /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD107AC2D118B1F7BD44C1C /* AppCoordinator.swift */; };
 		2AA4A5CEEDF05E9915D1D9E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3C2A6DDF6E175FE26094F27 /* Assets.xcassets */; };
 		2E99D4C7E8E24F04A211E91B /* MediaRemoteAdapter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 848A8551563FB4C23030B723 /* MediaRemoteAdapter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -40,17 +40,15 @@
 		6556F498DEC4E10E1D802A5F /* NotchPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886675E525BF0EC39D6A104B /* NotchPanel.swift */; };
 		6581636E66EC565B6FE33917 /* SystemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1798C7CCB8DFBAED6677F3 /* SystemDetailView.swift */; };
 		687F4836FD109F5417D8DCCC /* ExpandedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A8B8EF887858BB95F8F0E8 /* ExpandedView.swift */; };
-		688CA3E57DD2C3143DE7AD6E /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = BAB58DE6801A93E4FA14BFE9 /* Sparkle */; };
-		68FDCAF6101611CC221035CC /* ShortcutRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45936EEFA758EC386DFB3A65 /* ShortcutRegistrar.swift */; };
 		6FC244BDE084F5CDBEC95055 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADDFC79B3B5887E63A4E325 /* AppDelegate.swift */; };
 		730E62D76D951FDA7A6E42FE /* MediaProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30018D74CB16363D796FCFE4 /* MediaProgressBar.swift */; };
 		7361CF9D7575D5330624665F /* SystemInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D723383436EBFAC0B46DBE /* SystemInfoView.swift */; };
-		797B1A398089393528094FAE /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 63255C4D6D2DA524A548C3EF /* KeyboardShortcuts */; };
+		797B1A398089393528094FAE /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 28A180A93537E82138B5A5CF /* LaunchAtLogin */; };
 		79FBE9FF2A88C78A17FA857B /* MediaState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D775D323A4609A67161C38 /* MediaState.swift */; };
 		7A2455904E6D4ED837DC2ED5 /* AppleScriptHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5413049BC7ADF8EC4A6CE09F /* AppleScriptHelper.swift */; };
 		80E6FD6D9AD171E841FBF47A /* AirDropManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F78637FA261DCE934A41F3A /* AirDropManager.swift */; };
 		8C7CAEEFE68D9F7BE301DB09 /* MediaRemoteAdapter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 848A8551563FB4C23030B723 /* MediaRemoteAdapter.framework */; };
-		8CF880EF2687857AD2A46E30 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = E556554D18BB57B50B2AC12C /* Lottie */; };
+		8CF880EF2687857AD2A46E30 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = BAB58DE6801A93E4FA14BFE9 /* Sparkle */; };
 		973235E6DF5CBE6E97CD48D0 /* SettingsDrawerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81490B889DC1F775C837262 /* SettingsDrawerView.swift */; };
 		989E5BDA2F3C104B86BCD481 /* NotchDropDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F2059B8B6D90A979EE66184 /* NotchDropDelegateTests.swift */; };
 		9B37CC0B2889EA79A7AEC93B /* MediaCommandRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA95D076777AC1D8820A5674 /* MediaCommandRouter.swift */; };
@@ -113,7 +111,6 @@
 		359193A059FD905E8D8B3060 /* MediaRemoteStreamAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRemoteStreamAdapter.swift; sourceTree = "<group>"; };
 		3A39FB6357331ED9B70BB4F7 /* NotchSpaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchSpaceManager.swift; sourceTree = "<group>"; };
 		445799E4FD601727AF22774F /* NotchDropDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchDropDelegate.swift; sourceTree = "<group>"; };
-		45936EEFA758EC386DFB3A65 /* ShortcutRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRegistrar.swift; sourceTree = "<group>"; };
 		4C1E75EA50CB9962CFD58558 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
 		4F2059B8B6D90A979EE66184 /* NotchDropDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchDropDelegateTests.swift; sourceTree = "<group>"; };
 		5413049BC7ADF8EC4A6CE09F /* AppleScriptHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScriptHelper.swift; sourceTree = "<group>"; };
@@ -169,10 +166,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				60B0867B64636F0CA57A97C5 /* Defaults in Frameworks */,
-				797B1A398089393528094FAE /* KeyboardShortcuts in Frameworks */,
-				281FDAD7A28E6A396E8D98CC /* LaunchAtLogin in Frameworks */,
-				8CF880EF2687857AD2A46E30 /* Lottie in Frameworks */,
-				688CA3E57DD2C3143DE7AD6E /* Sparkle in Frameworks */,
+				797B1A398089393528094FAE /* LaunchAtLogin in Frameworks */,
+				281FDAD7A28E6A396E8D98CC /* Lottie in Frameworks */,
+				8CF880EF2687857AD2A46E30 /* Sparkle in Frameworks */,
 				8C7CAEEFE68D9F7BE301DB09 /* MediaRemoteAdapter.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -325,7 +321,6 @@
 				359193A059FD905E8D8B3060 /* MediaRemoteStreamAdapter.swift */,
 				3A39FB6357331ED9B70BB4F7 /* NotchSpaceManager.swift */,
 				71BFFFF3D875FF76E388EEDA /* ShelfManager.swift */,
-				45936EEFA758EC386DFB3A65 /* ShortcutRegistrar.swift */,
 				E6B04751DDFC9F4DCA0D956F /* SparkleUpdaterController.swift */,
 				C212B453CF69CA10CBB79AF0 /* SystemMonitor.swift */,
 			);
@@ -365,7 +360,6 @@
 			name = dao;
 			packageProductDependencies = (
 				3BE03006D9A6A8CAC6C1BB90 /* Defaults */,
-				63255C4D6D2DA524A548C3EF /* KeyboardShortcuts */,
 				28A180A93537E82138B5A5CF /* LaunchAtLogin */,
 				E556554D18BB57B50B2AC12C /* Lottie */,
 				BAB58DE6801A93E4FA14BFE9 /* Sparkle */,
@@ -420,7 +414,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2B683F906B164B1FF1A2304F /* XCRemoteSwiftPackageReference "Defaults" */,
-				AE3404FE12322D5150966582 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 				9E07296E8ACEBA1D78FCD434 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
 				9BCA20760AA8D40EB242AA96 /* XCRemoteSwiftPackageReference "lottie-spm" */,
 				F0EC1CE39C816632EEA6744B /* XCRemoteSwiftPackageReference "Sparkle" */,
@@ -537,7 +530,6 @@
 				DE8C1C0EF1C35280F4F9E19E /* ShelfItemRowView.swift in Sources */,
 				D8B31F6B8B67C57F9ABFD345 /* ShelfManager.swift in Sources */,
 				3F2B8C1EB6CCBB9DF4114CCC /* ShelfView.swift in Sources */,
-				68FDCAF6101611CC221035CC /* ShortcutRegistrar.swift in Sources */,
 				0BAA8774361A6FDE2760B6C7 /* SparkleUpdaterController.swift in Sources */,
 				6581636E66EC565B6FE33917 /* SystemDetailView.swift in Sources */,
 				DECE0BFF1422410F702F767B /* SystemInfo.swift in Sources */,
@@ -833,14 +825,6 @@
 				minimumVersion = 5.0.2;
 			};
 		};
-		AE3404FE12322D5150966582 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.10.0;
-			};
-		};
 		F0EC1CE39C816632EEA6744B /* XCRemoteSwiftPackageReference "Sparkle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
@@ -861,11 +845,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2B683F906B164B1FF1A2304F /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
-		};
-		63255C4D6D2DA524A548C3EF /* KeyboardShortcuts */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AE3404FE12322D5150966582 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
-			productName = KeyboardShortcuts;
 		};
 		BAB58DE6801A93E4FA14BFE9 /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;
