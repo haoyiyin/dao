@@ -1,7 +1,5 @@
 import AppKit
 import Combine
-import Defaults
-import SwiftUI
 
 /// 应用协调器（AppCoordinator，MVVM-C 中的 C）
 ///
@@ -14,15 +12,12 @@ final class AppCoordinator {
     /// 灵动岛窗口控制器
     private var windowController: NotchWindowController?
 
-    /// 引导窗口（首次启动）
-    private var onboardingWindow: NSWindow?
-
     /// 协调器级订阅
     private var coordinatorCancellables = Set<AnyCancellable>()
 
     // MARK: - 生命周期
 
-    /// 启动应用：创建灵动岛窗口与菜单栏图标
+    /// 启动应用：创建灵动岛窗口
     func start() {
         // 媒体监控（M2）
         MediaManager.shared.start()
@@ -42,28 +37,6 @@ final class AppCoordinator {
                 Task { @MainActor in self?.toggleWindowVisibility() }
             }
             .store(in: &coordinatorCancellables)
-
-        // 首次启动引导
-        showOnboardingIfNeeded()
-    }
-
-    /// 首次启动显示引导窗口
-    private func showOnboardingIfNeeded() {
-        guard !Defaults[.hasCompletedOnboarding] else { return }
-
-        let view = OnboardingView { [weak self] in
-            Defaults[.hasCompletedOnboarding] = true
-            self?.onboardingWindow?.close()
-            self?.onboardingWindow = nil
-        }
-        let hosting = NSHostingController(rootView: view)
-        let window = NSWindow(contentViewController: hosting)
-        window.title = LanguageManager.shared.text("欢迎使用 dao", "Welcome to dao")
-        window.styleMask = [.titled, .closable]
-        window.center()
-        onboardingWindow = window
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
     }
 
     /// 退出应用：释放资源

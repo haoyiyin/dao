@@ -11,7 +11,6 @@
 		04887ECED6A667BF8059F47B /* BatteryMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BB188077C8649FC4D45AE2 /* BatteryMonitor.swift */; };
 		080B9962FBB5649B045EEB4E /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D6D6FC5F7187528C0BA41AD /* LanguageManager.swift */; };
 		0BAA8774361A6FDE2760B6C7 /* SparkleUpdaterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B04751DDFC9F4DCA0D956F /* SparkleUpdaterController.swift */; };
-		0D574D90ABF19775084385C0 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEDDF47D1721320CEAE8C34D /* OnboardingView.swift */; };
 		0FC5A96B98605ECA705A689C /* MediaRemoteUpdateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AD8A8BFD809BBE02B7D127 /* MediaRemoteUpdateTests.swift */; };
 		10DBF3BEB9FFDA023BE6C7C5 /* FrequencyBarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1233DE64DE1AF4DAB1A7F7F /* FrequencyBarsView.swift */; };
 		18D5AD831D5A551F806A81F2 /* NotchDropDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445799E4FD601727AF22774F /* NotchDropDelegate.swift */; };
@@ -69,7 +68,6 @@
 		EF722FFC5DC5F46A65E6809E /* HoverIconButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E569C3940F5C6EF6C461E6D1 /* HoverIconButton.swift */; };
 		F2FF450E723D60CF48F6E8C8 /* ShelfItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FF9A326A3E86F826DD0A859 /* ShelfItem.swift */; };
 		F95527F542F4B6CC454258F1 /* StreamPayloadAccumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9446742612C75B128775C053 /* StreamPayloadAccumulatorTests.swift */; };
-		F9AFF2FEE3D9DFEF94FE96B8 /* PermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01E3164CCFDB1899F0B2B561 /* PermissionManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -97,7 +95,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		01E3164CCFDB1899F0B2B561 /* PermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionManager.swift; sourceTree = "<group>"; };
 		041A6A2305A41DEB5B6E9F6A /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		06BB188077C8649FC4D45AE2 /* BatteryMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryMonitor.swift; sourceTree = "<group>"; };
 		0A28AE4151C696E6D3CC536D /* mediaremote-adapter.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = "mediaremote-adapter.pl"; sourceTree = "<group>"; };
@@ -138,7 +135,6 @@
 		A3C2A6DDF6E175FE26094F27 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A6715C794B0CECDAEF0664C2 /* ShelfManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShelfManagerTests.swift; sourceTree = "<group>"; };
 		A81490B889DC1F775C837262 /* SettingsDrawerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDrawerView.swift; sourceTree = "<group>"; };
-		AEDDF47D1721320CEAE8C34D /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		BE23133F967A47E0F5FC12AE /* NotchShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchShape.swift; sourceTree = "<group>"; };
 		C212B453CF69CA10CBB79AF0 /* SystemMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemMonitor.swift; sourceTree = "<group>"; };
 		C371A9145D09B10EAD6D2C80 /* QuickLookPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickLookPreviewView.swift; sourceTree = "<group>"; };
@@ -299,8 +295,6 @@
 				BE23133F967A47E0F5FC12AE /* NotchShape.swift */,
 				DA7E827F5A3409061E25ABDA /* NotchView.swift */,
 				2ED4C7ECD7AA883D664C18BD /* NotchWindowController.swift */,
-				AEDDF47D1721320CEAE8C34D /* OnboardingView.swift */,
-				01E3164CCFDB1899F0B2B561 /* PermissionManager.swift */,
 				C371A9145D09B10EAD6D2C80 /* QuickLookPreviewView.swift */,
 				A81490B889DC1F775C837262 /* SettingsDrawerView.swift */,
 				96347C7FBAD3382724304D01 /* ShelfItemRowView.swift */,
@@ -521,8 +515,6 @@
 				E60267B6166DB4788E4A3ABC /* NotchSpaceManager.swift in Sources */,
 				CAC7795AE56FB64247128A48 /* NotchView.swift in Sources */,
 				60F781310487086BCA24D390 /* NotchWindowController.swift in Sources */,
-				0D574D90ABF19775084385C0 /* OnboardingView.swift in Sources */,
-				F9AFF2FEE3D9DFEF94FE96B8 /* PermissionManager.swift in Sources */,
 				9C0C798AA62DF1AA12023885 /* QuickLookPreviewView.swift in Sources */,
 				2536D5F788912027568D1D3A /* ScreenNotchDetector.swift in Sources */,
 				973235E6DF5CBE6E97CD48D0 /* SettingsDrawerView.swift in Sources */,

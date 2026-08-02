@@ -12,7 +12,6 @@ Native macOS Dynamic Island for the menu bar notch: media controls, a file shelf
 - **File shelf** — Drop files, text, or links onto the island; preview (Quick Look), drag out, or share via AirDrop.
 - **System** — CPU, memory, and disk usage with live bars; show/hide and reorder metrics in settings.
 - **Settings** — Launch at login, Chinese / English UI, default player, metric layout, quit.
-- **Onboarding** — First-run guide for Screen Recording and Accessibility (skippable; media falls back if denied).
 - **Non-notch displays** — Optional virtual notch / minimal capsule.
 
 Quit from the power icon inside the island settings drawer (no Dock / menu bar icon).
@@ -74,7 +73,7 @@ Window stays fixed at expanded size (`400×166`); collapse/expand is a visual ma
 
 - macOS 14.0+
 - Xcode (to build), optional: XcodeGen, cmake, SwiftLint
-- Runtime: Screen Recording + Accessibility recommended for full media control
+- Runtime: system may prompt for **Automation** if AppleScript media fallback is used
 
 ## Third-party
 

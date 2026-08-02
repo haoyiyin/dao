@@ -23,9 +23,6 @@ extension Defaults.Keys {
     /// 无媒体时收起态轮播切换间隔（秒）
     static let collapsedRotateInterval = Key<Double>("collapsedRotateInterval", default: 3.0)
 
-    /// 是否已完成首次引导
-    static let hasCompletedOnboarding = Key<Bool>("hasCompletedOnboarding", default: false)
-
     /// 非刘海屏是否显示虚拟灵动岛
     static let showVirtualNotch = Key<Bool>("showVirtualNotch", default: true)
 
