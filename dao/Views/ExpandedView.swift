@@ -1,3 +1,4 @@
+import LaunchAtLogin
 import SwiftUI
 
 /// 展开态容器：顶部刘海延续 + 横轴抽屉（媒体 / 传输 / 系统）
@@ -35,6 +36,9 @@ struct ExpandedView: View {
     /// 当前选中抽屉（由 NotchView 持有，拖放文件时自动切换到传输）
     @Binding var selectedDrawer: DrawerTab
 
+    @EnvironmentObject private var language: LanguageManager
+    @ObservedObject private var launchAtLogin = LaunchAtLogin.observable
+
     /// 是否显示设置面板（右上角齿轮控制，不进抽屉菜单）
     @State private var showSettings = false
 
@@ -46,8 +50,11 @@ struct ExpandedView: View {
     var body: some View {
         VStack(spacing: 0) {
             if showSettings {
-                // 设置全屏页：覆盖整个灵动岛
-                settingsFullScreen
+                // 顶栏：与菜单栏/刘海同高，承载设置快捷按钮
+                settingsTopBarRow
+                // 设置内容（默认播放器等）
+                settingsContent
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             } else {
                 // 顶部行：抽屉图标（左）+ 刘海 pill（中）+ 设置图标（右），同一行
                 topBarRow
@@ -59,21 +66,14 @@ struct ExpandedView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         // 黑底外形由 NotchView 层统一绘制；避免双层 shape 与固定窗尺寸动画冲突
-        .overlay(alignment: .topTrailing) {
-            // 设置图标（保留 overlay 用于设置全屏页时显示）
-            EmptyView()
-        }
     }
 
-    /// 设置全屏页（覆盖抽屉栏；内容超高时内部滚动）
-    private var settingsFullScreen: some View {
+    /// 设置内容区（顶栏以下；超高时滚动）
+    private var settingsContent: some View {
         ScrollView(showsIndicators: false) {
-            SettingsDrawerView {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
-                    showSettings = false
-                }
-            }
-            .padding(12)
+            SettingsDrawerView()
+                .padding(.horizontal, 12)
+                .padding(.bottom, 12)
         }
     }
 
@@ -106,7 +106,53 @@ struct ExpandedView: View {
         .frame(height: notchPillHeight)
     }
 
-    /// 抽屉图标按钮（小图标，悬停自动切换；onTapGesture：非激活面板 Button 不触发）
+    /// 设置态顶栏：与 `topBarRow` 同高，贴菜单栏/刘海
+    private var settingsTopBarRow: some View {
+        HStack(spacing: 0) {
+            HStack(spacing: 5) {
+                // 自启动
+                SettingsTopIconButton(
+                    symbol: launchAtLogin.isEnabled ? "bolt.fill" : "bolt",
+                    isActive: launchAtLogin.isEnabled,
+                    help: language.text("开机启动", "Launch at login")
+                ) {
+                    launchAtLogin.isEnabled.toggle()
+                }
+                // 语言
+                SettingsLanguageToggle(language: language.language) {
+                    language.toggle()
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 12)
+
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.black)
+                .frame(width: AppConfig.notchWidth, height: notchPillHeight)
+
+            HStack(spacing: 5) {
+                Spacer()
+                SettingsTopIconButton(
+                    symbol: "power",
+                    help: language.text("退出", "Quit")
+                ) {
+                    NSApp.terminate(nil)
+                }
+                SettingsTopIconButton(
+                    symbol: "xmark",
+                    help: language.text("关闭", "Close")
+                ) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
+                        showSettings = false
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.trailing, 12)
+        }
+        .frame(height: notchPillHeight)
+    }
+
     /// 抽屉图标按钮（小图标，hover 聚焦高亮；悬停自动切换菜单）
     private func drawerIconButton(_ tab: DrawerTab) -> some View {
         HoverIconButton(
@@ -141,7 +187,6 @@ struct ExpandedView: View {
             }
         }
     }
-
 
     @ViewBuilder
     private var drawerContent: some View {
@@ -182,5 +227,75 @@ struct ExpandedView: View {
                     .frame(minHeight: geo.size.height, alignment: .center)
             }
         }
+    }
+}
+
+// MARK: - 设置顶栏控件
+
+/// 设置顶栏图标按钮（与抽屉 HoverIconButton 同尺寸，贴刘海行）
+private struct SettingsTopIconButton: View {
+    var symbol: String
+    var isActive = false
+    var help: String
+    var action: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        Image(systemName: symbol)
+            .font(.system(size: 11, weight: .medium))
+            .foregroundStyle(isActive || isHovering ? Color.white : Color.white.opacity(0.6))
+            .frame(width: 24, height: 24)
+            .background(
+                Circle().fill(
+                    isActive
+                        ? Color.white.opacity(0.25)
+                        : (isHovering ? Color.white.opacity(0.16) : Color.white.opacity(0.05))
+                )
+            )
+            .contentShape(Circle())
+            .onContinuousHover { phase in
+                let hovering: Bool
+                switch phase {
+                case .active: hovering = true
+                case .ended: hovering = false
+                }
+                withAnimation(.easeOut(duration: 0.12)) {
+                    isHovering = hovering
+                }
+            }
+            .onTapGesture(perform: action)
+            .help(help)
+    }
+}
+
+/// 设置顶栏语言切换（"中"/"EN"）
+private struct SettingsLanguageToggle: View {
+    let language: AppLanguage
+    var action: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        ZStack {
+            Circle().fill(isHovering ? Color.white.opacity(0.2) : Color.white.opacity(0.08))
+            Text(language == .zh ? "中" : "EN")
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.8))
+        }
+        .frame(width: 24, height: 24)
+        .contentShape(Circle())
+        .onContinuousHover { phase in
+            let hovering: Bool
+            switch phase {
+            case .active: hovering = true
+            case .ended: hovering = false
+            }
+            withAnimation(.easeOut(duration: 0.12)) {
+                isHovering = hovering
+            }
+        }
+        .onTapGesture(perform: action)
+        .help(language == .zh ? "切换 English" : "切换中文")
     }
 }
