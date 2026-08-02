@@ -8,7 +8,7 @@ Native macOS Dynamic Island for the menu bar notch: media controls, a file shelf
 
 ## Features
 
-- **Media** — Now playing (artwork, title, artist, seekable progress), play / pause / next / previous, volume. Prefers music when music and video play at once. MediaRemote bridge with AppleScript fallback (Apple Music, Spotify, and more).
+- **Media** — Now playing (artwork, title, artist, seekable progress), play / pause / next / previous, volume. Follows the system now-playing session (last active source). MediaRemote bridge with AppleScript fallback (Apple Music, Spotify, and more).
 - **File shelf** — Drop files, text, or links onto the island; preview (Quick Look), drag out, or share via AirDrop.
 - **System** — CPU, memory, and disk usage with live bars; show/hide and reorder metrics in settings.
 - **Settings** — Launch at login, Chinese / English UI, default player, metric layout, quit.
@@ -62,7 +62,7 @@ Full signed / notarized pipeline (fill credentials in `build.sh` first):
 | Path | Role |
 |------|------|
 | `dao/App/` | Entry, `AppDelegate`, `AppCoordinator` |
-| `dao/Managers/` | Media, shelf, shortcuts, monitors |
+| `dao/Managers/` | Media, shelf, monitors |
 | `dao/Views/` | Notch panel, drawers, settings, onboarding |
 | `dao/Config/AppConfig` | Geometry and timing constants |
 | `Vendor/mediaremote-adapter` | MediaRemote bridge (BSD-3) |

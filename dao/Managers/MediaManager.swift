@@ -38,20 +38,16 @@ final class MediaManager: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     /// 进度插值计时器（1s）
     private var progressTimer: Timer?
-    /// 浏览器垫底任务（定时探测原生音乐是否在播）
-    private var browserDemotionTask: Task<Void, Never>?
-    /// true：正在用原生音乐覆盖浏览器 MediaRemote 会话，忽略浏览器流更新
-    private var browserDemoted = false
-
-    /// AppleScript 可探测的原生音乐 App（覆盖浏览器会话用）
-    private static let nativeMusicBundleIDs = ["com.apple.Music", "com.spotify.client"]
 
     private init() {
-        // 订阅流适配器状态
+        // 直接跟随 MediaRemote 当前会话（最后激活的 now-playing）
         streamAdapter.$state
             .removeDuplicates()
             .sink { [weak self] newState in
-                self?.handleStreamUpdate(newState)
+                guard let self else { return }
+                self.state = newState
+                self.isUsingFallback = false
+                self.appleScriptController.lastBundleID = newState.bundleIdentifier
             }
             .store(in: &cancellables)
 
@@ -63,98 +59,13 @@ final class MediaManager: ObservableObject {
     /// 启动媒体监控（AppCoordinator 调用）
     func start() {
         streamAdapter.startStream()
-        startBrowserDemotionCheck()
     }
 
     /// 停止媒体监控
     func stop() {
         streamAdapter.stopStream()
-        browserDemotionTask?.cancel()
-        browserDemotionTask = nil
-        browserDemoted = false
         progressTimer?.invalidate()
         progressTimer = nil
-    }
-
-    // MARK: - 浏览器垫底（网页会话永远排在原生 App 之后）
-
-    /// 处理 MediaRemote 流更新：非浏览器直接显示；垫底锁定时忽略浏览器流
-    private func handleStreamUpdate(_ newState: MediaState) {
-        let decision = MediaState.browserDemotionDecision(
-            newState: newState,
-            browserDemoted: browserDemoted
-        )
-        if decision.clearDemotion {
-            browserDemoted = false
-        }
-        guard decision.apply else { return }
-        applyDisplayedState(newState)
-    }
-
-    /// 写入岛上展示状态
-    private func applyDisplayedState(_ newState: MediaState) {
-        state = newState
-        isUsingFallback = false
-        appleScriptController.lastBundleID = newState.bundleIdentifier
-    }
-
-    /// 每 3 秒：浏览器为当前会话时探测 Music/Spotify；有播则覆盖并锁定
-    private func startBrowserDemotionCheck() {
-        browserDemotionTask?.cancel()
-        browserDemotionTask = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(3))
-                guard let self, !Task.isCancelled else { return }
-                await self.checkBrowserDemotion()
-            }
-        }
-    }
-
-    /// 浏览器垫底检查
-    private func checkBrowserDemotion() async {
-        // 已垫底：确认原生音乐仍在播，停则解锁恢复流
-        if browserDemoted {
-            let bundleID = state.bundleIdentifier ?? ""
-            if let info = await appleScriptController.fetchMusicInfo(bundleID: bundleID),
-               info.isPlaying {
-                applyNativeMusic(info, bundleID: bundleID)
-                return
-            }
-            browserDemoted = false
-            applyDisplayedState(streamAdapter.state)
-            return
-        }
-
-        // 仅当当前流是浏览器会话时，才尝试用原生音乐盖过
-        let stream = streamAdapter.state
-        guard stream.isActive, MediaState.isBrowserApp(stream.bundleIdentifier) else { return }
-
-        for bundleID in Self.nativeMusicBundleIDs {
-            if let info = await appleScriptController.fetchMusicInfo(bundleID: bundleID),
-               info.isPlaying {
-                applyNativeMusic(info, bundleID: bundleID)
-                browserDemoted = true
-                return
-            }
-        }
-    }
-
-    /// 用 AppleScript 拉到的原生音乐覆盖展示（浏览器会话仍在流里）
-    private func applyNativeMusic(_ info: MusicPlaybackInfo, bundleID: String) {
-        var merged = MediaState()
-        merged.title = info.title
-        merged.artist = info.artist
-        merged.album = info.album
-        merged.duration = info.duration
-        merged.elapsedTime = info.position
-        merged.timestamp = Date().timeIntervalSince1970
-        merged.playbackRate = info.isPlaying ? 1 : 0
-        merged.playingFlag = info.isPlaying
-        merged.bundleIdentifier = bundleID
-        merged.isMusicApp = true
-        merged.isActive = true
-        state = merged
-        appleScriptController.lastBundleID = bundleID
     }
 
     // MARK: - 进度插值

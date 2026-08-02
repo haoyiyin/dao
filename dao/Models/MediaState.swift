@@ -20,7 +20,7 @@ struct MediaState: Equatable {
     var artworkData: Data?
     /// 播放应用 bundle identifier
     var bundleIdentifier: String?
-    /// 是否为音乐类应用（白名单 / 流字段；UI 与优先策略参考）
+    /// 是否为音乐类应用（流字段 / 白名单兜底）
     var isMusicApp: Bool = false
     /// 播放中标记（透传流字段；部分应用缺失时用 playbackRate 兜底）
     var playingFlag: Bool?
@@ -88,44 +88,6 @@ struct MediaState: Equatable {
         default:
             return false
         }
-    }
-
-    /// 是否为浏览器（含 helper / 前缀族）。网页 MediaRemote 会话识别用。
-    nonisolated static func isBrowserApp(_ bundleID: String?) -> Bool {
-        guard let id = bundleID, !id.isEmpty else { return false }
-        // 前缀：Chrome / Edge / Brave / Firefox / Safari 族（含 helper、PWA）
-        if id.hasPrefix("com.google.Chrome")
-            || id.hasPrefix("com.brave.Browser")
-            || id.hasPrefix("com.microsoft.edgemac")
-            || id.hasPrefix("org.mozilla.firefox")
-            || id.hasPrefix("com.apple.Safari") {
-            return true
-        }
-        switch id {
-        case "company.thebrowser.Browser", // Arc
-             "com.operasoftware.Opera",
-             "com.vivaldi.Vivaldi",
-             "com.sigmaos.sigmaos.macos",
-             "com.kagi.kagimacOS":
-            return true
-        default:
-            return false
-        }
-    }
-
-    /// 浏览器垫底：非浏览器流更新始终采纳；垫底锁定时忽略浏览器流。
-    /// - Returns: `(apply, clearDemotion)`
-    nonisolated static func browserDemotionDecision(
-        newState: MediaState,
-        browserDemoted: Bool
-    ) -> (apply: Bool, clearDemotion: Bool) {
-        if !isBrowserApp(newState.bundleIdentifier) {
-            return (true, true)
-        }
-        if browserDemoted {
-            return (false, false)
-        }
-        return (true, false)
     }
 
     /// ISO8601 解析器（缓存复用）

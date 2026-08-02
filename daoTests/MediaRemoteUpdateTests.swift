@@ -105,41 +105,6 @@ final class MediaRemoteUpdateTests: XCTestCase {
         XCTAssertFalse(state.isActive)
     }
 
-    /// 浏览器 bundle 识别（含 helper 前缀）
-    func testBrowserAppDetection() {
-        XCTAssertTrue(MediaState.isBrowserApp("com.apple.Safari"))
-        XCTAssertTrue(MediaState.isBrowserApp("com.google.Chrome"))
-        XCTAssertTrue(MediaState.isBrowserApp("com.google.Chrome.helper"))
-        XCTAssertTrue(MediaState.isBrowserApp("org.mozilla.firefox"))
-        XCTAssertTrue(MediaState.isBrowserApp("company.thebrowser.Browser"))
-        XCTAssertFalse(MediaState.isBrowserApp("com.spotify.client"))
-        XCTAssertFalse(MediaState.isBrowserApp("com.apple.Music"))
-        XCTAssertFalse(MediaState.isBrowserApp(nil))
-        XCTAssertFalse(MediaState.isBrowserApp(""))
-    }
-
-    /// 浏览器垫底决策：非浏览器流始终采纳并清锁定；锁定时忽略浏览器流
-    func testBrowserDemotionDecision() {
-        var browser = MediaState()
-        browser.bundleIdentifier = "com.apple.Safari"
-        browser.isActive = true
-        var music = MediaState()
-        music.bundleIdentifier = "com.spotify.client"
-        music.isActive = true
-
-        let open = MediaState.browserDemotionDecision(newState: browser, browserDemoted: false)
-        XCTAssertTrue(open.apply)
-        XCTAssertFalse(open.clearDemotion)
-
-        let locked = MediaState.browserDemotionDecision(newState: browser, browserDemoted: true)
-        XCTAssertFalse(locked.apply)
-        XCTAssertFalse(locked.clearDemotion)
-
-        let native = MediaState.browserDemotionDecision(newState: music, browserDemoted: true)
-        XCTAssertTrue(native.apply)
-        XCTAssertTrue(native.clearDemotion)
-    }
-
     /// 损坏 JSON → 解码失败（流层会跳过该行）
     func testMalformedJSONThrows() {
         XCTAssertThrowsError(try decode("not json"))
