@@ -38,26 +38,20 @@ final class MediaManager: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     /// 进度插值计时器（1s）
     private var progressTimer: Timer?
+    /// 浏览器垫底任务（定时探测原生音乐是否在播）
+    private var browserDemotionTask: Task<Void, Never>?
+    /// true：正在用原生音乐覆盖浏览器 MediaRemote 会话，忽略浏览器流更新
+    private var browserDemoted = false
+
+    /// AppleScript 可探测的原生音乐 App（覆盖浏览器会话用）
+    private static let nativeMusicBundleIDs = ["com.apple.Music", "com.spotify.client"]
 
     private init() {
         // 订阅流适配器状态
         streamAdapter.$state
             .removeDuplicates()
             .sink { [weak self] newState in
-                guard let self else { return }
-                // 音乐优先锁定期间：忽略非音乐流更新（避免视频流覆盖音乐显示/进度）
-                if self.musicPriorityLocked {
-                    if newState.isMusicApp {
-                        self.musicPriorityLocked = false
-                        self.state = newState
-                        self.appleScriptController.lastBundleID = newState.bundleIdentifier
-                    }
-                    return
-                }
-                self.state = newState
-                self.isUsingFallback = false
-                // 记录播放应用，供 AppleScript 兜底使用
-                self.appleScriptController.lastBundleID = newState.bundleIdentifier
+                self?.handleStreamUpdate(newState)
             }
             .store(in: &cancellables)
 
@@ -69,82 +63,98 @@ final class MediaManager: ObservableObject {
     /// 启动媒体监控（AppCoordinator 调用）
     func start() {
         streamAdapter.startStream()
-        startMusicPriorityCheck()
+        startBrowserDemotionCheck()
     }
 
     /// 停止媒体监控
     func stop() {
         streamAdapter.stopStream()
-        musicPriorityTask?.cancel()
-        musicPriorityTask = nil
+        browserDemotionTask?.cancel()
+        browserDemotionTask = nil
+        browserDemoted = false
         progressTimer?.invalidate()
         progressTimer = nil
     }
 
-    // MARK: - 音乐优先（同时播放音乐和视频时优先显示音乐）
+    // MARK: - 浏览器垫底（网页会话永远排在原生 App 之后）
 
-    /// 音乐优先检查任务
-    private var musicPriorityTask: Task<Void, Never>?
+    /// 处理 MediaRemote 流更新：非浏览器直接显示；垫底锁定时忽略浏览器流
+    private func handleStreamUpdate(_ newState: MediaState) {
+        let decision = MediaState.browserDemotionDecision(
+            newState: newState,
+            browserDemoted: browserDemoted
+        )
+        if decision.clearDemotion {
+            browserDemoted = false
+        }
+        guard decision.apply else { return }
+        applyDisplayedState(newState)
+    }
 
-    /// 音乐优先锁定：true 时忽略非音乐流更新（避免视频流覆盖音乐显示与进度）
-    private var musicPriorityLocked = false
+    /// 写入岛上展示状态
+    private func applyDisplayedState(_ newState: MediaState) {
+        state = newState
+        isUsingFallback = false
+        appleScriptController.lastBundleID = newState.bundleIdentifier
+    }
 
-    /// 启动定时检查（每 3 秒：当前会话非音乐时，检测音乐应用是否在播放）
-    private func startMusicPriorityCheck() {
-        musicPriorityTask?.cancel()
-        musicPriorityTask = Task { [weak self] in
+    /// 每 3 秒：浏览器为当前会话时探测 Music/Spotify；有播则覆盖并锁定
+    private func startBrowserDemotionCheck() {
+        browserDemotionTask?.cancel()
+        browserDemotionTask = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(3))
                 guard let self, !Task.isCancelled else { return }
-                await self.checkMusicPriority()
+                await self.checkBrowserDemotion()
             }
         }
     }
 
-    /// 检查并优先显示音乐：当前会话非音乐且有音乐应用播放时，覆盖显示并锁定
-    private func checkMusicPriority() async {
-        // 已锁定且当前显示音乐：检查音乐是否仍在播放（停止则解锁）
-        if musicPriorityLocked {
+    /// 浏览器垫底检查
+    private func checkBrowserDemotion() async {
+        // 已垫底：确认原生音乐仍在播，停则解锁恢复流
+        if browserDemoted {
             let bundleID = state.bundleIdentifier ?? ""
-            if let info = await appleScriptController.fetchMusicInfo(bundleID: bundleID) {
-                if info.isPlaying {
-                    // 仍在播放：同步进度（避免长时间偏差）
-                    applyMusicPriority(info, bundleID: bundleID)
-                    return
-                }
+            if let info = await appleScriptController.fetchMusicInfo(bundleID: bundleID),
+               info.isPlaying {
+                applyNativeMusic(info, bundleID: bundleID)
+                return
             }
-            // 音乐停止/退出：解锁，恢复流显示
-            musicPriorityLocked = false
-            state = streamAdapter.state
+            browserDemoted = false
+            applyDisplayedState(streamAdapter.state)
             return
         }
 
-        guard state.isActive, !state.isMusicApp else { return }
-        // 优先 Apple Music，其次 Spotify（AppleScript 可拉取信息）
-        for bundleID in ["com.apple.Music", "com.spotify.client"] {
+        // 仅当当前流是浏览器会话时，才尝试用原生音乐盖过
+        let stream = streamAdapter.state
+        guard stream.isActive, MediaState.isBrowserApp(stream.bundleIdentifier) else { return }
+
+        for bundleID in Self.nativeMusicBundleIDs {
             if let info = await appleScriptController.fetchMusicInfo(bundleID: bundleID),
                info.isPlaying {
-                applyMusicPriority(info, bundleID: bundleID)
-                musicPriorityLocked = true
+                applyNativeMusic(info, bundleID: bundleID)
+                browserDemoted = true
                 return
             }
         }
     }
 
-    /// 应用音乐优先状态（覆盖当前视频会话显示）
-    private func applyMusicPriority(_ info: MusicPlaybackInfo, bundleID: String) {
-        var merged = state
-        merged.title = info.title ?? merged.title
+    /// 用 AppleScript 拉到的原生音乐覆盖展示（浏览器会话仍在流里）
+    private func applyNativeMusic(_ info: MusicPlaybackInfo, bundleID: String) {
+        var merged = MediaState()
+        merged.title = info.title
         merged.artist = info.artist
         merged.album = info.album
-        merged.duration = info.duration ?? merged.duration
+        merged.duration = info.duration
         merged.elapsedTime = info.position
         merged.timestamp = Date().timeIntervalSince1970
         merged.playbackRate = info.isPlaying ? 1 : 0
         merged.playingFlag = info.isPlaying
         merged.bundleIdentifier = bundleID
         merged.isMusicApp = true
+        merged.isActive = true
         state = merged
+        appleScriptController.lastBundleID = bundleID
     }
 
     // MARK: - 进度插值
