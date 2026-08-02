@@ -58,7 +58,7 @@ final class AppCoordinator {
         }
         let hosting = NSHostingController(rootView: view)
         let window = NSWindow(contentViewController: hosting)
-        window.title = "欢迎使用 dao"
+        window.title = LanguageManager.shared.text("欢迎使用 dao", "Welcome to dao")
         window.styleMask = [.titled, .closable]
         window.center()
         onboardingWindow = window

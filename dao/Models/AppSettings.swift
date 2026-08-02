@@ -32,8 +32,8 @@ extension Defaults.Keys {
     /// 默认播放器 bundle id（无媒体播放时点击播放打开的应用）
     static let defaultPlayer = Key<String?>("defaultPlayer", default: DefaultPlayerOption.appleMusic.rawValue)
 
-    /// 界面语言（zh-Hans / en）
-    static let language = Key<String>("language", default: "zh-Hans")
+    /// 界面语言（zh-Hans / en）；首次安装跟系统首选语言
+    static let language = Key<String>("language", default: AppLanguage.systemDefault.rawValue)
 }
 
 /// 设置访问器：读取当前生效的显示顺序

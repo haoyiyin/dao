@@ -4,9 +4,12 @@ import SwiftUI
 ///
 /// 三页流程：欢迎 → 权限申请（屏幕录制/辅助功能）→ 完成（提示重启生效）。
 /// 权限可跳过，不阻断使用（媒体功能降级）。
+/// 文案跟随 `LanguageManager`（首次安装默认跟系统语言）。
 struct OnboardingView: View {
     /// 当前页索引
     @State private var page = 0
+    /// 界面语言（与岛内 UI 同源）
+    @ObservedObject private var language = LanguageManager.shared
     /// 是否完成引导（由 AppCoordinator 注入回调）
     var onFinish: () -> Void
 
@@ -22,19 +25,20 @@ struct OnboardingView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .id(language.language)
 
             // 底部导航
             HStack {
                 if page > 0 {
-                    Button("上一步") { page -= 1 }
+                    Button(language.text("上一步", "Back")) { page -= 1 }
                         .buttonStyle(.bordered)
                 }
                 Spacer()
                 if page < totalPages - 1 {
-                    Button("下一步") { page += 1 }
+                    Button(language.text("下一步", "Next")) { page += 1 }
                         .buttonStyle(.borderedProminent)
                 } else {
-                    Button("开始使用") { onFinish() }
+                    Button(language.text("开始使用", "Get Started")) { onFinish() }
                         .buttonStyle(.borderedProminent)
                 }
             }
@@ -60,13 +64,16 @@ struct OnboardingView: View {
                 .frame(width: 88, height: 88)
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                 .shadow(color: .cyan.opacity(0.35), radius: 16, y: 4)
-            Text("欢迎使用 dao")
+            Text(language.text("欢迎使用 dao", "Welcome to dao"))
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.white)
-            Text("悬浮在屏幕顶部的灵动岛\n媒体控制 · 文件暂存 · 系统信息")
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.white.opacity(0.7))
+            Text(language.text(
+                "悬浮在屏幕顶部的灵动岛\n媒体控制 · 文件暂存 · 系统信息",
+                "A floating island at the top of your screen\nMedia · File shelf · System info"
+            ))
+            .font(.body)
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.white.opacity(0.7))
         }
         .padding(30)
     }
@@ -75,14 +82,17 @@ struct OnboardingView: View {
 
     private var permissionPage: some View {
         VStack(spacing: 12) {
-            Text("授权以下权限")
+            Text(language.text("授权以下权限", "Grant these permissions"))
                 .font(.title3.weight(.bold))
                 .foregroundStyle(.white)
 
             permissionRow(
                 icon: "display",
-                title: "屏幕录制",
-                subtitle: "用于获取媒体播放信息（可在设置中关闭，仅影响媒体控制）",
+                title: language.text("屏幕录制", "Screen Recording"),
+                subtitle: language.text(
+                    "用于获取媒体播放信息（可在设置中关闭，仅影响媒体控制）",
+                    "Used for now-playing info (can skip; media control may degrade)"
+                ),
                 granted: PermissionManager.shared.hasScreenRecordingPermission
             ) {
                 PermissionManager.shared.requestScreenRecording()
@@ -90,16 +100,22 @@ struct OnboardingView: View {
 
             permissionRow(
                 icon: "keyboard",
-                title: "辅助功能",
-                subtitle: "AppleScript 媒体控制兜底需要（Apple Music / Spotify）",
+                title: language.text("辅助功能", "Accessibility"),
+                subtitle: language.text(
+                    "AppleScript 媒体控制兜底需要（Apple Music / Spotify）",
+                    "Needed for AppleScript media fallback (Apple Music / Spotify)"
+                ),
                 granted: PermissionManager.shared.hasAccessibilityPermission
             ) {
                 PermissionManager.shared.requestAccessibility()
             }
 
-            Text("隐私说明：所有数据仅在本地处理，不上传任何信息。")
-                .font(.caption)
-                .foregroundStyle(.white.opacity(0.4))
+            Text(language.text(
+                "隐私说明：所有数据仅在本地处理，不上传任何信息。",
+                "Privacy: all data stays on device; nothing is uploaded."
+            ))
+            .font(.caption)
+            .foregroundStyle(.white.opacity(0.4))
         }
         .padding(30)
     }
@@ -127,11 +143,11 @@ struct OnboardingView: View {
             }
             Spacer()
             if granted {
-                Label("已授权", systemImage: "checkmark.circle.fill")
+                Label(language.text("已授权", "Granted"), systemImage: "checkmark.circle.fill")
                     .font(.caption)
                     .foregroundStyle(.green)
             } else {
-                Button("授权", action: action)
+                Button(language.text("授权", "Allow"), action: action)
                     .buttonStyle(.bordered)
                     .controlSize(.small)
             }
@@ -147,13 +163,16 @@ struct OnboardingView: View {
             Image(systemName: "checkmark.seal.fill")
                 .font(.system(size: 44))
                 .foregroundStyle(.green)
-            Text("一切就绪")
+            Text(language.text("一切就绪", "You're all set"))
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.white)
-            Text("部分权限需要重启应用后生效。\n灵动岛会出现在屏幕顶部，悬停即可展开。")
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.white.opacity(0.7))
+            Text(language.text(
+                "部分权限需要重启应用后生效。\n灵动岛会出现在屏幕顶部，悬停即可展开。",
+                "Some permissions need an app restart.\nThe island appears at the top of the screen — hover to expand."
+            ))
+            .font(.body)
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.white.opacity(0.7))
         }
         .padding(30)
     }

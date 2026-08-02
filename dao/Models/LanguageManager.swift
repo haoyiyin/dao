@@ -15,6 +15,12 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .en: return "English"
         }
     }
+
+    /// 跟随系统首选语言：`zh*` → 中文，其余 → 英文
+    static var systemDefault: AppLanguage {
+        let preferred = Locale.preferredLanguages.first ?? Locale.current.identifier
+        return preferred.hasPrefix("zh") ? .zh : .en
+    }
 }
 
 /// 语言管理器（切换时所有视图即时刷新）
@@ -27,7 +33,7 @@ final class LanguageManager: ObservableObject {
     @Published var language: AppLanguage
 
     private init() {
-        language = AppLanguage(rawValue: Defaults[.language]) ?? .zh
+        language = AppLanguage(rawValue: Defaults[.language]) ?? .systemDefault
     }
 
     /// 切换语言（zh ↔ en 循环）
