@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# Xcode / 构建产物
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# SwiftPM
+.swiftpm/
+.build/
+
+# 本地配置
+*.local
+Vendor/MediaRemoteAdapter.framework
+Vendor/build-mediaremote-adapter/
+dist/

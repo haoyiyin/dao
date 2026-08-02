@@ -1,0 +1,102 @@
+name: dao
+options:
+  bundleIdPrefix: com.dao
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: "-"
+    ENABLE_HARDENED_RUNTIME: YES
+    SWIFT_STRICT_CONCURRENCY: targeted
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+
+packages:
+  Defaults:
+    url: https://github.com/sindresorhus/Defaults
+    from: 8.2.0
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: 1.10.0
+  LaunchAtLogin:
+    url: https://github.com/sindresorhus/LaunchAtLogin
+    from: 5.0.2
+  Lottie:
+    url: https://github.com/airbnb/lottie-spm
+    from: 4.6.1
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: 2.9.4
+
+targets:
+  dao:
+    type: application
+    platform: macOS
+    sources:
+      - path: dao
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dao.app
+        PRODUCT_NAME: dao
+    info:
+      path: dao/Info.plist
+      properties:
+        CFBundleDisplayName: dao
+        LSMinimumSystemVersion: "14.0"
+        LSUIElement: true
+        NSAppleEventsUsageDescription: "dao 需要发送 AppleScript 事件以控制媒体播放（Apple Music、Spotify 等）。"
+        NSHumanReadableCopyright: ""
+        SUFeedURL: "https://example.com/appcast.xml"
+        SUEnableAutomaticChecks: false
+        SUPublicEDKey: ""
+    preBuildScripts:
+      - name: BuildMediaRemoteAdapter
+        script: |
+          "${PROJECT_DIR}/Scripts/build-mediaremote-adapter.sh"
+        basedOnDependencyAnalysis: false
+      - name: SwiftLint
+        script: |
+          if command -v swiftlint >/dev/null 2>&1; then
+            swiftlint || true
+          else
+            echo "warning: swiftlint not installed"
+          fi
+        basedOnDependencyAnalysis: false
+    dependencies:
+      - package: Defaults
+      - package: KeyboardShortcuts
+      - package: LaunchAtLogin
+      - package: Lottie
+      - package: Sparkle
+      - framework: Vendor/MediaRemoteAdapter.framework
+        embed: true
+        codeSign: true
+
+  daoTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: daoTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.dao.app.tests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: dao
+
+schemes:
+  dao:
+    build:
+      targets:
+        dao: all
+        daoTests: [test]
+    test:
+      targets:
+        - daoTests

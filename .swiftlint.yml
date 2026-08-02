@@ -1,0 +1,33 @@
+# SwiftLint 配置（遵循项目规范，lint 失败不阻塞构建）
+
+disabled_rules:
+  - trailing_whitespace
+  - vertical_whitespace
+
+opt_in_rules:
+  - empty_count
+  - closure_end_indentation
+  - sorted_first_last
+
+line_length:
+  warning: 140
+  error: 200
+
+type_name:
+  min_length: 2
+  max_length: 50
+
+identifier_name:
+  min_length: 2
+  max_length: 60
+  excluded:
+    - id
+    - x
+    - y
+    - w
+    - h
+
+excluded:
+  - DerivedData
+  - .build
+  - dynamic
